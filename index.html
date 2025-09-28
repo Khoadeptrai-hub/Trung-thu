@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trung Thu Yêu Thương - Đêm Đèn Lồng Hoàn Chỉnh</title>
+    <style>
+        /* CSS cho tổng thể trang */
+        body {
+            background-color: #0d1128; 
+            color: #fff;
+            margin: 0;
+            overflow: hidden; 
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* CSS cho Mặt Trăng */
+        #moon {
+            position: absolute; top: 50px; right: 50px; width: 150px; height: 150px; background: #fff; border-radius: 50%; box-shadow: 0 0 80px rgba(255, 255, 200, 0.7), 0 0 150px rgba(255, 255, 180, 0.4); z-index: 1; 
+        }
+
+        /* Ngôi sao nhỏ */
+        .star {
+            position: absolute; width: 2px; height: 2px; background-color: #fff; border-radius: 50%; opacity: 0.5; animation: twinkle 5s infinite alternate; z-index: 0;
+        }
+        @keyframes twinkle {
+            from { opacity: 0.2; } to { opacity: 0.8; }
+        }
+
+        /* CSS chung cho Lồng Đèn TRANG TRÍ */
+        .lantern {
+            position: absolute; width: 30px; height: 40px; cursor: pointer; 
+            background: radial-gradient(circle at center, #ff8c00 10%, #ff4500 90%);
+            border-radius: 50% 50% 40% 40% / 60% 60% 50% 50%;
+            box-shadow: 0 0 10px #ff9900, 0 0 5px #ff6600 inset;
+            animation: floatUp var(--duration) linear infinite;
+            z-index: 5; transform-origin: bottom center; 
+        }
+
+        /* Keyframes cho animation bay lên TỐC ĐỘ BÌNH THƯỜNG */
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            30% { opacity: 1; }
+            60% { transform: translateY(40vh) rotate(3deg); }
+            100% { transform: translateY(-10vh) rotate(-3deg); opacity: 0; }
+        }
+
+        /* --- CSS CHO LỒNG ĐÈN CHỨA LỜI CHÚC (ĐẶC BIỆT) --- */
+        .wish-lantern {
+            width: 45px; height: 60px;
+            background: radial-gradient(circle at center, #ffee00 10%, #ff8c00 90%);
+            outline: 4px solid #fff; outline-offset: 5px;
+            box-shadow: 0 0 25px 8px #fff0b3, 0 0 10px #ff8c00 inset;
+            
+            animation-name: floatUpSlow, pulseVibrate;
+            animation-duration: var(--duration), 0.5s;
+            animation-timing-function: linear, ease-in-out;
+            animation-iteration-count: infinite, infinite;
+            animation-direction: normal, alternate; 
+            z-index: 10;
+        }
+        
+        /* Keyframes cho hiệu ứng Lồng Đèn Chúc Mừng bay CHẬM HƠN */
+        @keyframes floatUpSlow {
+            0% { transform: translateY(100vh) rotate(0deg) scale(1); opacity: 0; }
+            50% { transform: translateY(50vh) rotate(5deg) scale(1.1); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(-5deg) scale(1.2); opacity: 0; }
+        }
+
+        /* Keyframes cho hiệu ứng RUNG (Vibration) liên tục và phát sáng */
+        @keyframes pulseVibrate {
+            0% { filter: brightness(1); transform: scale(1.0) rotate(0deg); }
+            50% { transform: scale(1.05) rotate(1deg); }
+            100% { filter: brightness(1.8); transform: scale(1.1) rotate(-1deg); }
+        }
+        /* ----------------------------------------------------- */
+
+        /* CSS cho Chúc Mừng (popup) */
+        #message-box {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(255, 255, 255, 0.98); color: #c93b1d; padding: 25px 40px; border-radius: 12px; box-shadow: 0 0 30px rgba(255, 200, 100, 0.9); text-align: center; font-size: 1.6em; font-weight: bold; z-index: 100; display: none; border: 3px solid #ffaa00;
+        }
+        #close-btn { 
+            margin-top: 20px; padding: 8px 20px; background-color: #c93b1d; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em;
+        }
+
+        /* --- GHI CHÚ VÀ NÚT NHẠC HỢP NHẤT --- */
+        #instruction-note {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 15px;
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #c93b1d;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            line-height: 1.5;
+        }
+
+        #instruction-note .icon {
+            font-size: 1.3em; margin-right: 8px; color: #ffaa00; text-shadow: 0 0 5px #ffaa00;
+        }
+        
+        #combined-music-toggle {
+            background-color: #c93b1d; 
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="moon"></div>
+
+    <div id="message-box">
+        <p id="wish-text"></p>
+        <button id="close-btn">Đóng Lời Chúc</button>
+    </div>
+    
+    <div id="instruction-note">
+        <span class="icon">🏮</span> 
+        <span>Nhớ bấm vào lồng đèn phát sáng, và</span>
+        <button id="combined-music-toggle">
+            🎶 Bật Nhạc Lên
+        </button>
+        <audio id="background-music" loop>
+            <source src="trungthu.mp3" type="audio/mp3">
+        </audio>
+    </div>
+
+    <script>
+        const WISHES = [
+            "Trung Thu vui vẻ, ấm áp bên người thân yêu!",
+            "Chúc bạn sức khỏe, thành công, hạnh phúc viên mãn.",
+            "Nguyện ánh trăng rằm mang lại bình an, may mắn.",
+            "Chúc bạn có một đêm rằm sum vầy, an lành.",
+            "Hạnh phúc tròn đầy, tài lộc đầy nhà, Trung Thu an khang.",
+            "Trung Thu đoàn viên! Mọi sự như ý, vạn điều tốt lành.",
+            "Chúc gia đình mình mãi mãi hòa thuận, yêu thương.",
+            "Luôn bình an, vững vàng và gặt hái thành công mới.",
+            "Tận hưởng trọn vẹn hương vị bánh, ngắm trăng đẹp nhé!",
+            "Chúc bạn luôn rạng rỡ như ánh trăng đêm nay. ✨",
+            "Mọi công việc thuận lợi, tình cảm bền lâu. Happy Mid-Autumn!",
+            "Gửi ngàn lời chúc yêu thương đến bạn và gia đình.",
+            "Mong bạn luôn giữ được sự lạc quan, yêu đời.",
+            "Chúc bạn có những khoảnh khắc đáng nhớ, ý nghĩa nhất.",
+            "Ánh trăng soi rọi, chúc bạn có thêm nhiều thành tựu.",
+            "Trung Thu là đoàn tụ. Chúc mọi người luôn bên nhau. 🥂",
+            "Chúc bạn một năm sung túc, ấm no, mọi điều tốt đẹp.",
+            "Chúc bạn có một đêm rằm thư thái, không lo âu!",
+            "Sức khỏe dồi dào, niềm vui dâng trào. Trung Thu an lành.",
+            "Chúc tình thân, tình bạn luôn rực sáng như lồng đèn. 💖",
+        ];
+
+        const WISH_COUNT = WISHES.length; 
+        const TOTAL_LANTERNS = 200; 
+        
+        const availableWishIndices = Array.from({length: WISH_COUNT}, (_, i) => i);
+        const WISH_RATIO = WISH_COUNT / TOTAL_LANTERNS;
+
+        /**
+         * Hàm tạo và thêm một lồng đèn ngẫu nhiên vào trang
+         */
+        function createLantern() {
+            const lantern = document.createElement('div');
+            lantern.className = 'lantern';
+
+            let isWishLantern = availableWishIndices.length > 0 && Math.random() < WISH_RATIO;
+            
+            const duration = isWishLantern ? (20 + Math.random() * 10) : (12 + Math.random() * 8); 
+            const delay = Math.random() * 10; 
+            const startLeft = Math.random() * window.innerWidth;
+            
+            lantern.style.setProperty('--duration', `${duration}s`);
+            lantern.style.left = `${startLeft}px`;
+            lantern.style.animationDelay = `${delay}s`;
+
+            // Lồng đèn chứa lời chúc
+            if (isWishLantern) {
+                const randomIndex = Math.floor(Math.random() * availableWishIndices.length);
+                const wishIndex = availableWishIndices.splice(randomIndex, 1)[0];
+                
+                lantern.classList.add('wish-lantern');
+                lantern.onclick = () => {
+                    showWish(WISHES[wishIndex]);
+                    availableWishIndices.push(wishIndex); // Đưa lời chúc trở lại mảng
+
+                    lantern.remove();
+                    createLantern(); // Tạo lồng đèn mới thay thế
+                };
+            } else {
+            // Lồng đèn trang trí
+                 lantern.onclick = () => {
+                    lantern.style.transform = 'scale(1.5)';
+                    setTimeout(() => {
+                         lantern.remove();
+                         createLantern();
+                    }, 200);
+                };
+            }
+
+            // Xóa và tái tạo lồng đèn khi bay hết
+            lantern.addEventListener('animationend', () => {
+                lantern.remove();
+                createLantern();
+            });
+
+            document.body.appendChild(lantern);
+        }
+
+        // Tạo 200 lồng đèn ban đầu (kích hoạt hàm tạo)
+        for (let i = 0; i < TOTAL_LANTERNS; i++) {
+            createLantern();
+        }
+        
+        // Tạo thêm 20 lồng đèn chúc mừng để đảm bảo số lượng xuất hiện ban đầu
+        for(let i = 0; i < WISH_COUNT; i++) {
+            createLantern(); 
+        }
+
+
+        // Logic hiển thị lời chúc
+        const messageBox = document.getElementById('message-box');
+        const wishText = document.getElementById('wish-text');
+        const closeBtn = document.getElementById('close-btn');
+
+        function showWish(wish) {
+            wishText.textContent = wish;
+            messageBox.style.display = 'block';
+        }
+
+        closeBtn.onclick = () => {
+            messageBox.style.display = 'none';
+        };
+
+        // Logic Ngôi Sao
+        function createStars() {
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                document.body.appendChild(star);
+            }
+        }
+        createStars();
+
+
+        // LOGIC TỰ ĐỘNG PHÁT NHẠC
+        const music = document.getElementById('background-music');
+        const musicToggle = document.getElementById('combined-music-toggle');
+        let isPlaying = false;
+
+        function checkAndPlayMusic() {
+            music.volume = 0.5; 
+            music.play().then(() => {
+                isPlaying = true;
+                musicToggle.innerHTML = '🎶 Đang Phát';
+                musicToggle.disabled = true;
+            }).catch(error => {
+                musicToggle.innerHTML = '🎶 Bật Nhạc Lên';
+            });
+        }
+
+        window.onload = checkAndPlayMusic;
+
+        musicToggle.onclick = () => {
+            if (!isPlaying) {
+                music.play().then(() => {
+                    isPlaying = true;
+                    musicToggle.innerHTML = '🎶 Đang Phát';
+                    musicToggle.disabled = true; 
+                }).catch(error => {
+                    alert("Không thể phát nhạc. Vui lòng kiểm tra file trungthu.mp3.");
+                });
+            }
+        };
+
+        music.onpause = () => {
+            if (music.currentTime > 0 && !music.ended) {
+                isPlaying = false;
+                musicToggle.innerHTML = '🎶 Tạm Dừng';
+                musicToggle.disabled = false;
+            }
+        };
+        
+        music.onplay = () => {
+            isPlaying = true;
+            musicToggle.innerHTML = '🎶 Đang Phát';
+            musicToggle.disabled = true;
+        }
+    </script>
+</body>
+</html>
